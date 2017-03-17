@@ -2,16 +2,30 @@
 <html lang="">
   <head>
     <style>html{opacity: 0;transition: opacity .5s;}html.loaded {opacity: 1;}</style>
-    <script class="run_once" src="js/jxy.js"></script>
-    <script id="meta">include("noi/modules/meta", "meta");</script>
+    <script src="/js/jxy.js"></script>
+    <script id="meta">include("/noi/modules/meta", "meta");</script>
 
-    <title>Home Page</title>
-    <meta name="description" content="description for the home page">
+    <title>Contact Page</title>
+    <meta name="description" content="description for the Contact page">
 
   </head>
   <body>
-    <script id="header">include("noi/modules/header", "header", [675, 1280]);</script>
+    <script id="header">include("/noi/modules/header", "header", [675, 1280]);</script>
+    <script id="massive">include("/noi/modules/massive", "massive");</script>
+<!--     <h1>hello world</h1>
     <h1>hello world</h1>
-
+    <h1>hello world</h1>
+    <h1>hello world</h1>
+    <h1>hello world</h1>
+    <h1>hello world</h1>
+    <h1>hello world</h1> -->
+    <div data-jxy-lazy-offset="100" class="lazy" style="background-color: blue"><script id="lazy2">include("/noi/modules/lazy2", "lazy2");</script></div>
+<!--     <h1>hello world</h1>
+    <h1>hello world</h1>
+    <h1>hello world</h1>
+    <h1>hello world</h1>
+    <h1>hello world</h1>
+    <h1>hello world</h1> -->
+    <div data-jxy-lazy-offset="100" class="lazy" style="background-color: red"><script id="lazy">include("/noi/modules/lazy", "lazy");</script></div>
   </body>
 </html>

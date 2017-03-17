@@ -42,67 +42,66 @@ function include(theUrl, target, arr) {
         i++;
     }
     var _target = document.getElementById(target);
-    var xmlhttp = new XMLHttpRequest();
-    xmlhttp.onreadystatechange = function() {
-        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
 
-            var scripts = document.querySelectorAll("script:not(.accounted)");
-            scripts.forEach(function(element) {
-                element.classList.add('accounted');
-            });
-
-            _target.outerHTML = xmlhttp.responseText;
-
-            var addScripts = document.querySelectorAll("script:not(.accounted)");
-            addScripts.forEach(function(element) {
-                var newScript = document.createElement("SCRIPT");
-                newScript.innerHTML = element.innerHTML;
-                if(element.hasAttribute("src")){
-                    newScript.setAttribute("src", element.getAttribute("src"));
+    if(_target.parentNode.classList.contains("lazy")){
+        var offset = _target.parentNode.getAttribute("data-jxy-lazy-offset") || 100;
+        var wH = window.innerHeight;
+        var ps = _target.parentNode.getBoundingClientRect().top - wH - offset;
+        console.log([_target.id, ps]);
+        window.addEventListener("scroll", function vvv(e){
+            ps = _target.parentNode.getBoundingClientRect().top - wH - offset;
+            console.log(ps);
+            if(ps <= 0){
+                window.removeEventListener("scroll", vvv);
+                var xmlhttp = new XMLHttpRequest();
+                xmlhttp.onreadystatechange = function() {
+                    if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                        bob(_target, xmlhttp.responseText, url);
+                    }
                 }
-                newScript.setAttribute("data-jxy-injected-script-from", url);
-                document.head.appendChild(newScript);
-            });
-
-            debounceClassName();
+                xmlhttp.open("GET", url, true);
+                xmlhttp.send();
+            }
+        })
+    }else {
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                bob(_target, xmlhttp.responseText);
+            }
         }
+        xmlhttp.open("GET", url, true);
+        xmlhttp.send();
     }
-    xmlhttp.open("GET", url, true);
-    xmlhttp.send();
 }
 
+function bob(outer, res, lru){
+    var scripts = document.querySelectorAll("script:not(.accounted)");
+    scripts.forEach(function(element) {
+        element.classList.add('accounted');
+    });
 
+    outer.outerHTML = res;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* experimental */
+    var addScripts = document.querySelectorAll("script:not(.accounted)");
+    addScripts.forEach(function(element) {
+        var newScript = document.createElement("SCRIPT");
+        newScript.innerHTML = element.innerHTML;
+        if(element.hasAttribute("src")){
+            newScript.setAttribute("src", element.getAttribute("src"));
+        }
+        newScript.setAttribute("data-jxy-injected-script-from", lru);
+        document.head.appendChild(newScript);
+    });
+    debounceClassName();
+}
 
 function fullReplace(theUrl) {
     var xmlhttp = new XMLHttpRequest();
     xmlhttp.onreadystatechange = function() {
         if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
             document.documentElement.innerHTML = xmlhttp.responseText;
-            var addScripts = document.querySelectorAll("script:not([src$='jxy.js'])");
+            var addScripts = document.querySelectorAll("script:not([src$='jxy.js']):not([src$='jxy.min.js'])");
             addScripts.forEach(function(element) {
                 var newScript = document.createElement("SCRIPT");
                 newScript.innerHTML = element.innerHTML;
@@ -131,17 +130,19 @@ window.addEventListener("click", function(e) {
     }
 });
 
-function debouncedResize(a,b){
-return window.addEventListener("resize",function(){
-  clearTimeout(b),
-  b = setTimeout(a,250)
-}),a
-}
-debouncedResize(function(){
-    // TODO
-    // fullreplace only if a breakpoint is crossed
-    fullReplace(window.location.href);
-});
+// turned off reload-on-resize for now
+
+// function debouncedResize(a,b){
+// return window.addEventListener("resize",function(){
+//   clearTimeout(b),
+//   b = setTimeout(a,250)
+// }),a
+// }
+// debouncedResize(function(){
+//     // TODO
+//     // fullreplace only if a breakpoint is crossed
+//     fullReplace(window.location.href);
+// });
 
 
 // back/forward button functionality
