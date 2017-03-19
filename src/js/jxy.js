@@ -43,13 +43,16 @@ function include(theUrl, target, arr) {
     }
     var _target = document.getElementById(target);
 
-    if(_target.parentNode.classList.contains("lazy")){
-        var offset = _target.parentNode.getAttribute("data-jxy-lazy-offset") || 100;
+    _target.style.display = "block";
+    _target.style.height = "20px";
+
+    if(_target.hasAttribute("jm-lazy")){
+        var offset = _target.getAttribute("jm-lazy") || 100;
         var wH = window.innerHeight;
-        var ps = _target.parentNode.getBoundingClientRect().top - wH - offset;
+        var ps = _target.getBoundingClientRect().top - wH - offset;
         console.log([_target.id, ps]);
         window.addEventListener("scroll", function vvv(e){
-            ps = _target.parentNode.getBoundingClientRect().top - wH - offset;
+            ps = _target.getBoundingClientRect().top - wH - offset;
             console.log(ps);
             if(ps <= 0){
                 window.removeEventListener("scroll", vvv);
