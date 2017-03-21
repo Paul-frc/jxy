@@ -1,3 +1,7 @@
+clean up code, make ,ore functions
+change name to jam
+documentation
+seperation of template engine and core
 sass comilation
 actual content
 cache busting with versioning

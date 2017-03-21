@@ -41,7 +41,7 @@ function include(theUrl, target, arr) {
         i++;
     }
 
-    var _target = document.querySelector("script[jm-name="+target+"]:not(.accounted)");
+    var _target = document.querySelector("[jm-name="+target+"]");
 
     _target.style.display = "block";
     _target.style.height = "20px";
@@ -57,7 +57,7 @@ function include(theUrl, target, arr) {
                 var xmlhttp = new XMLHttpRequest();
                 xmlhttp.onreadystatechange = function() {
                     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-
+                        console.log("wicked and i'm lazy");
 
                         bob(_target, xmlhttp.responseText, url);
 
@@ -71,7 +71,7 @@ function include(theUrl, target, arr) {
         var xmlhttp = new XMLHttpRequest();
         xmlhttp.onreadystatechange = function() {
             if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-
+                console.log("not lazy");
                 bob(_target, xmlhttp.responseText, url);
 
             }
@@ -81,32 +81,14 @@ function include(theUrl, target, arr) {
     }
 }
 
-function scriptCheck(){
-    var scripts = document.querySelectorAll("script:not(.accounted)");
-    scripts.forEach(function(element) {
-        element.classList.add('accounted');
-    });
-}
-
-
-function scriptAdd(youarell){
-    var addScripts = document.querySelectorAll("script:not(.accounted)");
-    addScripts.forEach(function(element) {
-        var newScript = document.createElement("SCRIPT");
-        newScript.innerHTML = element.innerHTML;
-        if(element.hasAttribute("src")){
-            newScript.setAttribute("src", element.getAttribute("src"));
-        }
-        newScript.setAttribute("data-jxy-injected-script-from", youarell);
-        document.head.appendChild(newScript);
-    });
-}
-
-
 function bob(outer, res, lru){
     /* json data */
 
+    console.log("bob called");
+
     if(outer.hasAttribute("jm-data") ){
+
+        console.log("has a jm-data thingy");
 
         var jsonData = outer.getAttribute("jm-data");
         var xmlhttp = new XMLHttpRequest();
@@ -115,10 +97,7 @@ function bob(outer, res, lru){
                 var dotted = doT.template(res);
                 res = dotted(JSON.parse(xmlhttp.responseText));
 
-                scriptCheck();
                 outer.outerHTML = res;
-                scriptAdd(lru);
-
 
                 debounceClassName();
 
@@ -130,9 +109,9 @@ function bob(outer, res, lru){
 
     }else{
 
-        scriptCheck();
+        console.log("doesn't have a jm-data thingy33");
+
         outer.outerHTML = res;
-        scriptAdd(lru);
 
         debounceClassName();
 
