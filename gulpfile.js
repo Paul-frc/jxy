@@ -1,15 +1,33 @@
-var gulp = require('gulp');
+var gulp        = require('gulp');
 var runSequence = require('run-sequence');
-var gulpIf = require('gulp-if');
-var useref = require('gulp-useref');
-var purify = require('gulp-purifycss');
-var cssnano = require('gulp-cssnano');
-var uglify = require('gulp-uglify');
-var htmlmin = require('gulp-htmlmin');
-var imagemin = require('gulp-imagemin');
-var cache = require('gulp-cache');
-var del = require('del');
+var gulpIf      = require('gulp-if');
+var useref      = require('gulp-useref');
+var purify      = require('gulp-purifycss');
+var cssnano     = require('gulp-cssnano');
+var uglify      = require('gulp-uglify');
+var htmlmin     = require('gulp-htmlmin');
+var imagemin    = require('gulp-imagemin');
+var cache       = require('gulp-cache');
+var del         = require('del');
+var browserSync = require('browser-sync');
 
+// Start browserSync server
+gulp.task('browserSync', function() {
+  browserSync({
+    server: {
+        baseDir: "./dist",
+        serveStaticOptions: {
+            extensions: ['html']
+        }
+    },
+    // https: {
+    //     key: "dist/localhost/key.pem",
+    //     cert: "dist/localhost/cert.pem"
+    // },
+    // httpModule: 'http2',
+    notify: false
+  })
+})
 
 // minify + uglify css, js and html
 // optimize images
@@ -23,7 +41,7 @@ gulp.task('all', function() {
       minifyCSS: true,
       minifyJS: true
     })))
-    .pipe(gulpIf('*.js', uglify()))
+    //.pipe(gulpIf('*.js', uglify()))
     .pipe(gulpIf('*.css', cssnano()))
     .pipe(gulpIf('*.+(png|jpg|jpeg|gif|svg)', cache(imagemin({
       interlaced: true,
@@ -62,7 +80,7 @@ gulp.task('build', function(callback) {
 
 // Watch
 gulp.task('watch', function() {
-  gulp.watch('src/**/*.+(html|css|js)',  ['build']);
+    gulp.watch('src/**/*.+(html|css|js)', ['build', browserSync.reload]);
 })
 
 // Gulp - Build + Watch
@@ -70,6 +88,7 @@ gulp.task('default', function(callback) {
   runSequence(
     'build',
     'watch',
+    'browserSync',
     callback
   )
 })

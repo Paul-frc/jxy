@@ -1,5 +1,6 @@
 {
     "City" : "Helsinki, FI",
     "Name" : "Fred Fredson",
-    "ShoeSize" : 45
+    "ShoeSize" : 45,
+    "image": "https://placekitten.com/g/700/600"
 }

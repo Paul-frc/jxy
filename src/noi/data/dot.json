@@ -1,5 +1,6 @@
 {
     "City" : "Funkytown, USA",
     "Name" : "Matthew D. Groves",
-    "ShoeSize" : 13
+    "ShoeSize" : 13,
+    "image": "https://placekitten.com/g/800/600"
 }

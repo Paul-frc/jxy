@@ -148,3 +148,7 @@ a.no-style {
   color: red;
   background: yellow;
 }
+
+.center-text {
+    text-align: center;
+}

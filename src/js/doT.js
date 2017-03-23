@@ -40,13 +40,13 @@
     _globals = (function(){ return this || (0,eval)("this"); }());
 
     /* istanbul ignore else */
-    // if (typeof module !== "undefined" && module.exports) {
-    //     module.exports = doT;
-    // } else if (typeof define === "function" && define.amd) {
-    //     define(function(){return doT;});
-    // } else {
-    //     _globals.doT = doT;
-    // }
+    if (typeof module !== "undefined" && module.exports) {
+        module.exports = doT;
+    } else if (typeof define === "function" && define.amd) {
+        define(function(){return doT;});
+    } else {
+        _globals.doT = doT;
+    }
 
     var startend = {
         append: { start: "'+(",      end: ")+'",      startencode: "'+encodeHTML(" },
