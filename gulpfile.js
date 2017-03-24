@@ -1,67 +1,58 @@
-var gulp        = require('gulp');
-var gulpIf      = require('gulp-if');
-var useref      = require('gulp-useref');
-var purify      = require('gulp-purifycss');
-var cssnano     = require('gulp-cssnano');
-var uglify      = require('gulp-uglify');
-var htmlmin     = require('gulp-htmlmin');
-var imagemin    = require('gulp-imagemin');
-var cache       = require('gulp-cache');
-
-var fs          = require('file-system');
+var gulp         = require('gulp');
+var gulp         = require('gulp-if');
+var useref       = require('gulp-useref');
+var purify       = require('gulp-purifycss');
+var cssnano      = require('gulp-cssnano');
+var uglify       = require('gulp-uglify');
+var htmlmin      = require('gulp-htmlmin');
+var imagemin     = require('gulp-imagemin');
+var cache        = require('gulp-cache');
+var fs           = require('file-system');
 var finalhandler = require('finalhandler');
-var http        = require('http');
-var http2       = require('http2');
-var serveStatic = require('serve-static');
-var runSequence = require('run-sequence');
-var del         = require('del');
+var http         = require('http');
+var http2        = require('http2');
+var serveStatic  = require('serve-static');
+var runSequence  = require('run-sequence');
+var del          = require('del');
 
-var connect     = require('gulp-connect');
-var browserSync = require('browser-sync');
+// http server
 
-// Start browserSync server
-// gulp.task('browserSync', function() {
-//   browserSync({
-//     server: {
-//         baseDir: "./dist",
-//         serveStaticOptions: {
-//             extensions: ['html']
-//         }
-//     },
-//     // https: {
-//     //     key: "dist/localhost/key.pem",
-//     //     cert: "dist/localhost/cert.pem"
-//     // },
-//     // httpModule: 'http2',
-//     notify: false
-//   })
+// gulp.task('start-server', function(){
+//     var serve = serveStatic('./dist', {
+//       'index': ['index.html'],
+//       'extensions': ['html'],
+//       'maxAge': 3600000
+//     })
+//     var server = http.createServer(function onRequest (request, response) {
+//       serve(request, response, finalhandler(request, response))
+//     })
+//     server.listen(8888)
 // })
 
-// Serve up public/ftp folder
-// var serve = serveStatic('public/ftp', {'index': ['index.html', 'index.htm']})
+// https server, with http/2
+// requires .ssl directory with cert and key
+// https://certsimple.com/blog/localhost-ssl-fix
 
-// Serve up public/ftp folder
-
-var options = {
-  key: fs.readFileSync('./.ssl/key.pem'),
-  cert: fs.readFileSync('./.ssl/cert.pem')
-};
-
-var serve = serveStatic('./dist', {
-  'index': ['index.html'],
-  'extensions': ['html']
+gulp.task('start-server', function(){
+    var options = {
+      key: fs.readFileSync('./.ssl/key.pem'),
+      cert: fs.readFileSync('./.ssl/cert.pem')
+    };
+    var serve = serveStatic('./dist', {
+      'index': ['index.html'],
+      'extensions': ['html'],
+      'maxAge': 3600000
+    })
+    var server = http2.createServer(options, function onRequest (request, response) {
+      serve(request, response, finalhandler(request, response))
+    })
+    server.listen(8888)
 })
-
-// Create server + listen
-var server = http2.createServer(options, function onRequest (req, res) {
-  serve(req, res, finalhandler(req, res))
-}).listen(8888)
-
-
 
 // minify + uglify css, js and html
 // optimize images
 // copy all to dest
+
 gulp.task('all', function() {
   return gulp.src('src/**/*')
     .pipe(useref())
@@ -80,6 +71,7 @@ gulp.task('all', function() {
 })
 
 // purify global css against all html and js
+
 gulp.task('purify-css', function() {
   return gulp.src('dist/css/*.css')
     .pipe(purify(['dist/**/*.js', 'dist/**/*.html']))
@@ -88,6 +80,7 @@ gulp.task('purify-css', function() {
 })
 
 // Cleaning
+
 gulp.task('clean', function() {
   return del.sync('dist').then(function(cb) {
     return cache.clearAll(cb);
@@ -99,6 +92,7 @@ gulp.task('clean:dist', function() {
 });
 
 // Build
+
 gulp.task('build', function(callback) {
   runSequence(
     'clean:dist',
@@ -109,15 +103,24 @@ gulp.task('build', function(callback) {
 })
 
 // Watch
+
 gulp.task('watch', function() {
     gulp.watch('src/**/*.+(html|css|js)', ['build']);
 })
 
-// Gulp - Build + Watch
+// Gulp - Build + Watch + start-server
+
 gulp.task('default', function(callback) {
   runSequence(
     'build',
     'watch',
+    'start-server',
     callback
   )
 })
+
+/* TODO
+
+    1. Browser refresh on save
+
+*/
